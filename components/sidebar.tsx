@@ -21,17 +21,17 @@ import {
 const navMenu = [
     {
         name: "Home",
-        icon: "MdHome",
+        icon: MdHome,
         route: "/"
     },
     {
         name: "Search",
-        icon: "MdSearch",
+        icon: MdSearch,
         route: "/search"
     },
     {
         name: "Your Library",
-        icon: "MdLibraryMusic",
+        icon: MdLibraryMusic,
         route: "/library"
     }
 ]
@@ -54,7 +54,16 @@ const Sidebar = () => {
                         {navMenu.map(menu => (
                             <ListItem paddingX="20px" fontSize="16px" key={menu.name}>
                                 <LinkBox>
-                                    
+                                    <NextLink href={menu.route} passHref>
+                                        <LinkOverlay>
+                                            <ListIcon 
+                                            as={menu.icon} 
+                                            color="white" 
+                                            marginRight="20px"
+                                            />
+                                            {menu.name}
+                                        </LinkOverlay>
+                                    </NextLink>
                                 </LinkBox>
                             </ListItem>
                         ))}
