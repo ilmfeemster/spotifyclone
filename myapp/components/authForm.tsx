@@ -27,7 +27,7 @@ const AuthForm: FC<{mode: "signin" | "signup" }> = ({mode}) => {
             height="100px" 
             borderBottom="white 1px solid"
             >
-            <NextImage src="/Spotify_Logo_CMYK_Green.png" height={60} width={200}/>
+            <NextImage src="/spotify_logo_white.png" height={60} width={200}/>
             </Flex>
             <Flex justify="center" align="center" height="calc(100vh - 100px)">
             <Box padding="50px" bg="gray.900" borderRadius="6px">

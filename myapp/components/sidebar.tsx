@@ -64,7 +64,7 @@ const Sidebar = () => {
         >
             <Box paddingY="20px" height="100%">
                 <Box width="120px" marginBottom="20px" paddingX="20px">
-                    <NextImage src="/Spotify_Logo_CMYK_Green.png" height={60} width={180}/>
+                    <NextImage src="/spotify_logo_white.png" height={60} width={180}/>
                 </Box>
                 <Box marginBottom="20px">
                     <List spacing={2}>
