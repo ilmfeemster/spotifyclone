@@ -1,16 +1,19 @@
 import { Box, Text, Flex } from "@chakra-ui/layout"
 import { Image } from "@chakra-ui/react"
+import {useMe} from "../lib/hooks"
 import GradientLayout from "../components/gradientLayout"
-import prisma from '../lib/prisma'
+import prisma from "../lib/prisma"
+
 
 const Home = ({artists}) => {
+	const {user} = useMe()
 	return (
 	<GradientLayout 
 	roundImage="true"
 	color="cyan" 
 	subtitle="profile" 
-	title="Immanuel Matthews" 
-	description="15 public playlists"
+	title={`${user?.firstName} ${user?.lastName}`} 
+	description={`${user.playlistsCount} public playlists`}
 	image="/spoofify_profile_pic.png">
 		<div>home page</div>
 
