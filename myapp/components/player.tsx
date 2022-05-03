@@ -28,11 +28,27 @@ import { formatTime } from "../lib/formatters"
     const [playing, setPlaying] = useState(true)
     const [index, setIndex] =useState(0)
     const [seek, setSeek] = useState(0.0)
-    const [isSeekeing, setIsSeeking] = useState(false)
+    const [isSeeking, setIsSeeking] = useState(false)
     const [repeat, setRepeat] = useState(false)
     const [shuffle, setShuffle] = useState(false)
     const [duration, setDuration] = useState(0.0)
     const soundRef = useRef(null)
+
+    useEffect(() => {
+        let timerId
+    
+        if (playing && !isSeeking) {
+          const f = () => {
+            setSeek(soundRef.current.seek())
+            timerId = requestAnimationFrame(f)
+          }
+    
+          timerId = requestAnimationFrame(f)
+          return () => cancelAnimationFrame(timerId)
+        }
+    
+        cancelAnimationFrame(timerId)
+      }, [playing, isSeeking])
 
     const setPlayState = (value) => {
         setPlaying(value)
@@ -156,36 +172,35 @@ import { formatTime } from "../lib/formatters"
                  </ButtonGroup>
              </Center>
              <Box color="gray.600">
-                 <Flex justify="center" align="center">
-                    <Box width="10%">
-                        <Text fontSize="xs">1:21</Text>
-                    </Box>
-                    <Box width="80%">
-                        <RangeSlider aria-label={["min", "max"]}
-                        step={0.1}
-                        min={0}
-                        max={duration ? duration.toFixed(2) : 0}
-                        onChange={onSeek}
-                        value={[seek]}
-                        onChangeStart={setIsSeeking(true)}
-                        onChangeEnd={setIsSeeking(false)} 
-                        id="player-range"
-                        >
-                            <RangeSliderTrack bg="gray.800">
-                                <RangeSliderFilledTrack bg="gray.600"/>
-                            </RangeSliderTrack>
-                            <RangeSliderThumb index={0} />
-                        </RangeSlider>
-                    </Box>
-                    <Box width="10%">
-                        <Text fontSize="xs" textAlign="right">
-                            {formatTime(duration)}
-                        </Text>
-                    </Box>
-                 </Flex>
-             </Box>
-         </Box>
-     )
- }
+        <Flex justify="center" align="center">
+          <Box width="10%">
+            <Text fontSize="xs">{formatTime(seek)}</Text>
+          </Box>
+          <Box width="80%">
+            <RangeSlider
+              aria-label={['min', 'max']}
+              step={0.1}
+              min={0}
+              id="player-range"
+              max={duration ? (duration.toFixed(2) as unknown as number) : 0}
+              onChange={onSeek}
+              value={[seek]}
+              onChangeStart={() => setIsSeeking(true)}
+              onChangeEnd={() => setIsSeeking(false)}
+            >
+              <RangeSliderTrack bg="gray.800">
+                <RangeSliderFilledTrack bg="gray.600" />
+              </RangeSliderTrack>
+              <RangeSliderThumb index={0} />
+            </RangeSlider>
+          </Box>
+          <Box width="10%" textAlign="right">
+            <Text fontSize="xs">{formatTime(duration)}</Text>
+          </Box>
+        </Flex>
+      </Box>
+    </Box>
+  )
+}
 
  export default Player
