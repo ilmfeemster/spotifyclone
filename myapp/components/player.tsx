@@ -21,14 +21,18 @@ MdOutlineRepeat
  import ReactHowler from "react-howler"
  import { useEffect, useRef, useState } from "react"
  import { useStoreActions } from "easy-peasy"
+import { formatTime } from "../lib/formatters"
+ 
 
  const Player = ({songs, activeSong}) => {
     const [playing, setPlaying] = useState(true)
     const [index, setIndex] =useState(0)
     const [seek, setSeek] = useState(0.0)
+    const [isSeekeing, setIsSeeking] = useState(false)
     const [repeat, setRepeat] = useState(false)
     const [shuffle, setShuffle] = useState(false)
     const [duration, setDuration] = useState(0.0)
+    const soundRef = useRef(null)
 
     const setPlayState = (value) => {
         setPlaying(value)
@@ -42,12 +46,54 @@ MdOutlineRepeat
         setRepeat((state) => !state)
     }
 
+    const prevSong = () => {
+        setIndex((state) => {
+            return state ? state - 1 : songs.length - 1
+        })
+    }
+
+    const nextSong = () => {
+        setIndex((state) => {
+            if (shuffle) {
+                const next = Math.floor(Math.random() * songs.length)
+
+                if (next === state) {
+                    return nextSong()
+                }
+                return next
+            } 
+            return state === songs.length - 1 ? 0 : state + 1            
+        })
+    }
+
+    const onEnd = () => {
+        if (repeat) {
+            setSeek(0)
+            soundRef.current.seek(0)
+        } else {
+            nextSong()
+        }
+    }
+
+    const onLoad = () => {
+        const songDuration = soundRef.current.duration()
+        setDuration(songDuration)
+    }
+
+    const onSeek = (e) => {
+        setSeek(parseFloat(e[0]))
+        soundRef.current.seek(e[0])
+    }
+
      return (
          <Box>
              <Box>
                  <ReactHowler 
                     playing={playing}
                     src={activeSong?.url}
+                    ref={soundRef}
+                    onLoad={onLoad}
+                    onEnd={onEnd}
                  />
              </Box>
              <Center>
@@ -66,6 +112,7 @@ MdOutlineRepeat
                         variant="link" 
                         aria-label="previous" 
                         fontSize="24px"
+                        onClick={prevSong}
                         icon={<MdSkipPrevious />}
                     />
                     {playing ? (
@@ -94,6 +141,7 @@ MdOutlineRepeat
                         variant="link" 
                         aria-label="next" 
                         fontSize="24px"
+                        onClick={nextSong}
                         icon={<MdSkipNext />}
                     />
                         <IconButton 
@@ -116,7 +164,11 @@ MdOutlineRepeat
                         <RangeSlider aria-label={["min", "max"]}
                         step={0.1}
                         min={0}
-                        max={321}
+                        max={duration ? duration.toFixed(2) : 0}
+                        onChange={onSeek}
+                        value={[seek]}
+                        onChangeStart={setIsSeeking(true)}
+                        onChangeEnd={setIsSeeking(false)} 
                         id="player-range"
                         >
                             <RangeSliderTrack bg="gray.800">
@@ -127,7 +179,7 @@ MdOutlineRepeat
                     </Box>
                     <Box width="10%">
                         <Text fontSize="xs" textAlign="right">
-                            3:31
+                            {formatTime(duration)}
                         </Text>
                     </Box>
                  </Flex>
