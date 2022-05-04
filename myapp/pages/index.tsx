@@ -6,16 +6,17 @@ import prisma from "../lib/prisma"
 
 
 const Home = ({artists}) => {
-	const {user} = useMe()
+	const { user } = useMe()
 	return (
 	<GradientLayout 
-	roundImage="true"
+	roundImage
 	color="cyan" 
 	subtitle="profile" 
 	title={`${user?.firstName} ${user?.lastName}`} 
-	description={`${user.playlistsCount} public playlists`}
-	image="/spoofify_profile_pic.png">
-		<div>home page</div>
+	description={`${user?.playlistsCount} public playlists`}
+	image="/spoofify_profile_pic.png"
+	>
+
 
 	<Box color="white" paddingX="40px">
 		<Box marginBottom="40px">
